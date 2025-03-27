@@ -6,20 +6,20 @@
     <title>اختبار قرارات الحكام</title>
     <style>
         :root {
-            --primary-color: #007bff;
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --font-family: 'Tahoma', sans-serif; /* خط بسيط وواضح */
+            --primary-color: #0d6efd; /* Bootstrap Blue */
+            --secondary-color: #6c757d; /* Bootstrap Gray */
+            --success-color: #198754; /* Bootstrap Green */
+            --danger-color: #dc3545; /* Bootstrap Red */
+            --light-color: #f8f9fa; /* Bootstrap Light Gray */
+            --dark-color: #212529; /* Bootstrap Dark Gray */
+            --font-family: 'Tahoma', sans-serif;
         }
 
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* منع التمرير */
+            overflow: hidden;
             font-family: var(--font-family);
             background-color: var(--light-color);
             color: var(--dark-color);
@@ -34,96 +34,147 @@
 
         .container {
             width: 95%;
-            max-width: 800px; /* حد أقصى للعرض */
-            height: 95vh;     /* استخدام نسبة من ارتفاع الشاشة */
-            max-height: 600px; /* حد أقصى للارتفاع */
+            max-width: 800px;
+            height: 95vh;
+            max-height: 650px; /* Slightly increased max height */
             background-color: #ffffff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            display: flex; /* Changed to flex for easier view switching */
             flex-direction: column;
-            justify-content: space-between; /* توزيع المساحة */
-            overflow: hidden; /* تأكيد عدم التمرير داخل الحاوية */
+            justify-content: space-around; /* Adjust spacing */
+            overflow: hidden;
         }
 
-        /* --- شاشة الاختبار --- */
-        /* Test view is now the default starting view */
+        /* --- Views --- */
+        .view {
+            display: none; /* Hide all views by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            height: 100%; /* Take full height of container */
+            width: 100%;
+        }
+        #main-view {
+            display: flex; /* Show main view initially */
+            gap: 25px; /* Space between buttons */
+        }
         #test-view {
-            display: flex; /* Display by default */
-            flex-direction: column;
-            height: 100%;
+             justify-content: space-between; /* Space out elements in test view */
+        }
+        #results-view {
+            justify-content: space-between;
         }
 
+
+        /* --- Main Menu --- */
+        #main-view h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+        #main-view button {
+            width: 60%;
+            max-width: 250px;
+            padding: 15px 20px;
+            font-size: 1.2em;
+        }
+         #exit-btn {
+             background-color: var(--secondary-color);
+         }
+         #exit-btn:hover {
+              background-color: #5a6268;
+          }
+
+        /* --- Test View --- */
+         #test-view h2 { /* Test title/status */
+             color: var(--dark-color);
+             margin: 5px 0 10px 0;
+             font-size: 1.2em;
+             min-height: 1.5em; /* Reserve space */
+         }
         #video-container {
             position: relative;
             width: 100%;
-            height: 60vh; /* زيادة ارتفاع الفيديو */
-            max-height: 400px; /* زيادة الحد الأقصى لارتفاع الفيديو */
+            height: 55vh; /* Adjust video height */
+            max-height: 380px;
             background-color: #000;
             margin-bottom: 15px;
+            border-radius: 5px;
+            overflow: hidden; /* Clip video if needed */
         }
 
         #test-video {
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: contain; /* للحفاظ على نسبة العرض إلى الارتفاع */
+            object-fit: contain;
         }
 
-        #controls {
-            margin-bottom: 15px;
+        #controls-container, #options-container, #feedback-container {
+             width: 100%;
+             min-height: 50px; /* Ensure containers have some height */
+             margin-bottom: 10px;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             flex-wrap: wrap;
+             gap: 10px;
         }
+         #options-container {
+            min-height: 60px; /* More space for options */
+         }
 
-        #options-container {
-            display: flex;
-            flex-wrap: wrap; /* للسماح بانتقال الأزرار لسطر جديد إذا لزم الأمر */
-            justify-content: center;
-            gap: 10px; /* مسافة بين الأزرار */
-            margin-top: 15px;
-        }
-
-        /* --- شاشة النتائج --- */
-        #results-view {
-            display: none; /* مخفي افتراضيًا */
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            overflow-y: auto; /* السماح بالتمرير إذا كانت النتائج كثيرة */
-        }
-
+        /* --- Results View --- */
          #results-view h2 {
             color: var(--primary-color);
-             margin-bottom: 20px;
+            margin-bottom: 15px;
          }
 
         #results-summary {
             font-size: 1.1em;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+             width: 90%;
         }
+
+         #results-table-container {
+             width: 100%;
+             max-height: 50vh; /* Limit table height */
+             overflow-y: auto; /* Allow scrolling for table only */
+             margin-bottom: 15px;
+             border: 1px solid #ddd;
+             border-radius: 5px;
+         }
 
         #results-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
 
         #results-table th, #results-table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 8px 5px; /* Adjust padding */
             text-align: center;
+            font-size: 0.95em;
         }
 
         #results-table th {
             background-color: var(--secondary-color);
             color: white;
+            position: sticky; /* Keep header visible */
+            top: 0;
+            z-index: 1;
         }
+        #results-table tr:nth-child(even){ background-color: var(--light-color); }
+        .result-correct { color: var(--success-color); font-weight: bold; }
+        .result-incorrect { color: var(--danger-color); font-weight: bold; }
 
-         #results-table tr:nth-child(even){background-color: var(--light-color);}
-
-        /* --- الأزرار والعناصر العامة --- */
+        /* --- Buttons --- */
         button {
-            padding: 12px 25px;
+            padding: 12px 20px;
             font-size: 1em;
             font-family: var(--font-family);
             background-color: var(--primary-color);
@@ -131,40 +182,52 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            min-width: 100px; /* عرض أدنى للأزرار */
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            min-width: 110px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         button:hover {
-            background-color: #0056b3;
+            opacity: 0.9;
+        }
+         button:active {
+            transform: scale(0.98); /* Slight press effect */
         }
 
         button:disabled {
             background-color: var(--secondary-color);
             cursor: not-allowed;
+            opacity: 0.7;
+             box-shadow: none;
         }
 
         .option-button {
-             background-color: var(--success-color);
+             background-color: var(--primary-color); /* Start neutral */
+             min-width: 120px; /* Ensure options fit */
         }
-        .option-button:hover {
-             background-color: #218838;
+        .option-button.correct-option {
+            background-color: var(--success-color) !important; /* Force green */
+            color: white !important;
         }
-
-        #stop-video-btn {
-            background-color: var(--danger-color);
+        .option-button.incorrect-option {
+             background-color: var(--danger-color) !important; /* Force red */
+             color: white !important;
         }
-        #stop-video-btn:hover {
-            background-color: #c82333;
-        }
-
-        #status {
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: var(--secondary-color);
+         /* Style for selected but wrong */
+        .option-button.selected-wrong {
+            border: 3px solid var(--dark-color); /* Highlight selected wrong */
         }
 
-         /* تحسينات للشاشات الصغيرة واللمس */
+
+        #ready-btn { background-color: var(--success-color); }
+        #ready-btn:hover { background-color: #146c43; }
+        #stop-video-btn { background-color: var(--danger-color); }
+        #stop-video-btn:hover { background-color: #bb2d3b; }
+        #next-btn, #finish-test-btn, #results-back-btn { background-color: var(--primary-color); }
+        #show-results-btn { background-color: var(--success-color); }
+
+
+         /* --- Responsive --- */
          @media (max-width: 600px) {
             .container {
                 width: 100%;
@@ -172,295 +235,479 @@
                 max-height: none;
                 border-radius: 0;
                 padding: 10px;
-                 box-shadow: none;
+                box-shadow: none;
+                justify-content: space-between;
+            }
+            #main-view button {
+                width: 70%;
+                font-size: 1.1em;
             }
             #video-container {
-                height: 55vh; /* تعديل الارتفاع للشاشات الأصغر */
+                height: 50vh;
                 max-height: none;
-                 margin-bottom: 10px;
+                margin-bottom: 10px;
             }
              button {
-                 padding: 15px 20px; /* زيادة حجم الأزرار للمس */
-                 font-size: 1.1em;
+                 padding: 15px 18px;
+                 font-size: 1.05em;
              }
              #options-container {
                  gap: 8px;
              }
+             #results-table th, #results-table td {
+                 font-size: 0.9em;
+                 padding: 6px 4px;
+             }
              #results-view {
-                 padding-bottom: 60px; /* مساحة إضافية في الأسفل لتجنب التغطية */
+                 padding-bottom: 15px;
              }
          }
-
     </style>
 </head>
 <body>
 
     <div class="container">
 
-        <!-- شاشة تسجيل الدخول محذوفة -->
+        <!-- 1. Main Menu View -->
+        <div id="main-view" class="view">
+            <h1>اختبار الحكام</h1>
+            <button id="take-test-btn">بدء اختبار جديد</button>
+            <button id="my-results-btn">نتائجي السابقة</button>
+            <button id="exit-btn" disabled>خروج</button> <!-- Disabled for web context -->
+        </div>
 
-        <!-- 1. شاشة الاختبار (أصبحت الشاشة الافتراضية) -->
-        <div id="test-view">
-             <h1>اختبار قرارات الحكام</h1> <!-- Added Title Here -->
-            <div id="status">الحالة 1 من X</div>
+        <!-- 2. Test View -->
+        <div id="test-view" class="view">
+            <h2 id="status">الحالة 1 من X</h2>
             <div id="video-container">
                 <video id="test-video" playsinline muted controlsList="nodownload nofullscreen noremoteplayback"></video>
             </div>
-            <div id="controls">
-                <button id="stop-video-btn">إيقاف الفيديو</button>
+            <div id="controls-container">
+                 <button id="ready-btn" style="display: none;">جاهز / تشغيل الفيديو</button>
+                 <button id="stop-video-btn" style="display: none;">إيقاف الفيديو</button>
             </div>
-            <div id="options-container" style="visibility: hidden;">
-                <!-- سيتم ملء الأزرار هنا بواسطة JavaScript -->
+            <div id="options-container">
+                <!-- Option buttons will be added here -->
+            </div>
+            <div id="feedback-container">
+                 <!-- Next/Finish buttons will be added here -->
             </div>
         </div>
 
-        <!-- 2. شاشة النتائج -->
-        <div id="results-view">
+        <!-- 3. Results View -->
+        <div id="results-view" class="view">
             <h2>نتائج الاختبار</h2>
             <div id="results-summary"></div>
-            <table id="results-table">
-                <thead>
-                    <tr>
-                        <th>الحالة</th>
-                        <th>القرار المتخذ</th>
-                        <th>الإجابة الصحيحة</th>
-                        <th>الوقت (ثانية)</th>
-                        <th>النتيجة</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- سيتم ملء الصفوف هنا بواسطة JavaScript -->
-                </tbody>
-            </table>
-            <button id="restart-btn">إعادة الاختبار</button>
-            <!-- زر تسجيل الخروج محذوف -->
+            <div id="results-table-container">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>الحالة</th>
+                            <th>القرار المتخذ</th>
+                            <th>الإجابة الصحيحة</th>
+                            <th>الوقت (ثانية)</th>
+                            <th>النتيجة</th>
+                            <th>نقاط (الوقت)</th> <!-- Score based on time -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Result rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+            <button id="results-back-btn">العودة للقائمة الرئيسية</button>
         </div>
 
     </div>
 
     <script>
-        // --- العناصر ---
-        // تم حذف عناصر تسجيل الدخول
+        // --- Elements ---
+        const mainView = document.getElementById('main-view');
         const testView = document.getElementById('test-view');
         const resultsView = document.getElementById('results-view');
+
+        const takeTestBtn = document.getElementById('take-test-btn');
+        const myResultsBtn = document.getElementById('my-results-btn');
+        const exitBtn = document.getElementById('exit-btn'); // Although disabled, keep ref
+
+        const statusElement = document.getElementById('status');
         const videoElement = document.getElementById('test-video');
+        const controlsContainer = document.getElementById('controls-container');
+        const readyBtn = document.getElementById('ready-btn');
         const stopVideoBtn = document.getElementById('stop-video-btn');
         const optionsContainer = document.getElementById('options-container');
-        const statusElement = document.getElementById('status');
+        const feedbackContainer = document.getElementById('feedback-container');
+
         const resultsSummary = document.getElementById('results-summary');
         const resultsTableBody = document.querySelector('#results-table tbody');
-        const restartBtn = document.getElementById('restart-btn');
-        // تم حذف زر تسجيل الخروج
+        const resultsBackBtn = document.getElementById('results-back-btn');
 
-
-        // --- بيانات الاختبار (استخدم روابط فيديوهات حقيقية ومتاحة للعامة) ---
+        // --- Test Data ---
         const testCases = [
             {
-                videoUrl: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4', // مثال قصير جداً
-                options: ['خطأ بسيط', 'إنذار', 'طرد'],
-                correctAnswer: 'إنذار'
+                id: '1',
+                videoUrl: 'https://videos.pexels.com/video-files/6217182/6217182-hd_1920_1080_30fps.mp4',
+                options: ['خطأ (ركلة حرة)', 'لا يوجد خطأ', 'إنذار (سلوك غير رياضي)'],
+                correctAnswer: 'خطأ (ركلة حرة)' // Example answer
             },
             {
-                videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', // فيديو أطول قليلاً
-                options: ['لا يوجد خطأ', 'ضربة حرة مباشرة', 'ضربة جزاء', 'إنذار'],
-                correctAnswer: 'ضربة حرة مباشرة'
+                id: '2',
+                videoUrl: 'https://videos.pexels.com/video-files/6217184/6217184-hd_1920_1080_30fps.mp4',
+                options: ['تسلل', 'هدف صحيح', 'رمية تماس'],
+                correctAnswer: 'هدف صحيح' // Example answer
+            },
+            {   // Note: This video is vertical format
+                id: '3',
+                videoUrl: 'https://videos.pexels.com/video-files/6217345/6217345-hd_1080_1920_30fps.mp4',
+                options: ['ركلة جزاء', 'تمثيل (إنذار)', 'استمرار اللعب'],
+                correctAnswer: 'تمثيل (إنذار)' // Example answer
             },
             {
-                videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', // فيديو مختلف
-                options: ['تسلل', 'رمية تماس', 'هدف صحيح'],
-                correctAnswer: 'تسلل'
-            },
-             {
-                videoUrl: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4', // مثال آخر قصير
-                options: ['بطاقة صفراء', 'بطاقة حمراء', 'لا شيء'],
-                correctAnswer: 'لا شيء'
-            },
-             {
-                 // تأكد من أن هذا الرابط يعمل ومتاح
-                 videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                 options: ['خطأ', 'تمثيل', 'استمرار اللعب', 'ركلة ركنية'],
-                 correctAnswer: 'استمرار اللعب'
-             }
-            // يمكنك إضافة المزيد من الحالات هنا
+                id: '4',
+                videoUrl: 'https://videos.pexels.com/video-files/6217064/6217064-hd_1920_1080_30fps.mp4',
+                options: ['طرد (لعب عنيف)', 'إنذار (تهور)', 'لا يوجد خطأ'],
+                correctAnswer: 'إنذار (تهور)' // Example answer
+            }
+            // Add more cases if needed
         ];
 
-        // --- متغيرات حالة الاختبار ---
+        // --- State Variables ---
         let currentCaseIndex = 0;
         let decisionStartTime = 0;
-        let results = [];
+        let currentSessionResults = []; // Holds results for the test just taken
+        let allTimeResults = []; // Holds all results loaded/saved from storage
+        const RESULTS_STORAGE_KEY = 'refereeTestResults_v1';
 
-        // --- وظائف ---
+        // --- Functions ---
 
-        // وظيفة للتبديل بين الشاشات
         function showView(viewId) {
-            // إخفاء كل الشاشات أولاً
-            testView.style.display = 'none';
-            resultsView.style.display = 'none';
-
+            // Hide all views
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            // Show the requested view
             const viewToShow = document.getElementById(viewId);
             if (viewToShow) {
-                // إظهار الشاشة المطلوبة باستخدام flex
                 viewToShow.style.display = 'flex';
             } else {
-                 console.error("View not found:", viewId);
+                console.error("View not found:", viewId);
+                mainView.style.display = 'flex'; // Fallback to main view
             }
         }
 
-        // تحميل وعرض الحالة (الفيديو)
+        function initializeApp() {
+            console.log("Initializing app...");
+            loadAllTimeResults(); // Load previous results from storage
+            // Attach main menu listeners
+            takeTestBtn.addEventListener('click', startTest);
+            myResultsBtn.addEventListener('click', showAllTimeResultsScreen);
+            // Exit button is disabled in web, but listener could be added for other contexts
+            // exitBtn.addEventListener('click', () => { alert('الخروج غير مدعوم في المتصفح.'); });
+            resultsBackBtn.addEventListener('click', goBackToMain);
+
+            // Attach test view listeners (event delegation might be better for options)
+            readyBtn.addEventListener('click', readyForVideo);
+            stopVideoBtn.addEventListener('click', handleStopVideo);
+
+            showView('main-view'); // Start at main menu
+        }
+
+        function startTest() {
+            currentCaseIndex = 0;
+            currentSessionResults = []; // Clear results for the new session
+            feedbackContainer.innerHTML = ''; // Clear feedback area
+            optionsContainer.innerHTML = ''; // Clear options area
+            loadCase(currentCaseIndex);
+            showView('test-view');
+        }
+
         function loadCase(index) {
             if (index >= testCases.length) {
-                showResults(); // انتهى الاختبار، اعرض النتائج
+                // This shouldn't be reached here due to finishTest logic
+                console.error("Tried to load case beyond limits.");
+                finishTest(); // Go to finish sequence
                 return;
             }
 
             const currentCase = testCases[index];
             statusElement.textContent = `الحالة ${index + 1} من ${testCases.length}`;
             videoElement.src = currentCase.videoUrl;
-            videoElement.currentTime = 0; // البدء من البداية
-            optionsContainer.innerHTML = ''; // مسح الخيارات القديمة
-            optionsContainer.style.visibility = 'hidden'; // إخفاء الخيارات
-            stopVideoBtn.disabled = false; // تمكين زر الإيقاف
-            stopVideoBtn.style.display = 'inline-block'; // إظهار زر الإيقاف
+            videoElement.currentTime = 0;
+            videoElement.pause(); // Ensure video is paused initially
 
-            // محاولة تشغيل الفيديو تلقائياً
-            videoElement.play().catch(error => {
-                console.warn("Autoplay failed:", error);
-                // قد تحتاج المتصفحات الحديثة إلى تفاعل المستخدم لبدء الفيديو
-                 statusElement.textContent += " (اضغط على الفيديو للبدء إذا لم يعمل)";
-                const playHandler = () => {
-                    videoElement.play();
-                    videoElement.removeEventListener('click', playHandler);
-                    videoElement.removeEventListener('touchstart', playHandler);
-                };
-                videoElement.addEventListener('click', playHandler);
-                 videoElement.addEventListener('touchstart', playHandler); // لدعم اللمس
-            });
+            // Reset UI elements for the new case
+            optionsContainer.innerHTML = ''; // Clear previous options
+            feedbackContainer.innerHTML = ''; // Clear previous feedback/next button
+            stopVideoBtn.style.display = 'none'; // Hide stop button
+            readyBtn.style.display = 'inline-block'; // Show ready button
+            readyBtn.disabled = false;
+
+            console.log(`Case ${index + 1} loaded.`);
         }
 
-        // التعامل مع إيقاف الفيديو
+         function readyForVideo() {
+             readyBtn.style.display = 'none'; // Hide ready button
+             stopVideoBtn.style.display = 'inline-block'; // Show stop button
+             stopVideoBtn.disabled = false;
+
+             // Attempt to play video
+             videoElement.play().then(() => {
+                 console.log("Video playing...");
+             }).catch(error => {
+                 console.error("Video play failed:", error);
+                 // Handle autoplay failure if necessary (e.g., show play icon)
+                 statusElement.textContent += " (حدث خطأ في تشغيل الفيديو)";
+                 // Re-show ready button or provide manual play option if needed
+                 stopVideoBtn.style.display = 'none';
+                 readyBtn.style.display = 'inline-block';
+             });
+         }
+
+
         function handleStopVideo() {
             videoElement.pause();
-            decisionStartTime = performance.now(); // بدء حساب الوقت
-            stopVideoBtn.disabled = true; // تعطيل الزر بعد الضغط
-            stopVideoBtn.style.display = 'none'; // إخفاء زر الإيقاف
+            decisionStartTime = performance.now(); // Record time when video is stopped
+            stopVideoBtn.disabled = true;
+            stopVideoBtn.style.display = 'none'; // Hide stop button after clicking
 
-            // عرض الخيارات
+            // Create and display options
             const currentCase = testCases[currentCaseIndex];
-            optionsContainer.innerHTML = ''; // تأكيد مسح الخيارات
+            optionsContainer.innerHTML = ''; // Clear just in case
             currentCase.options.forEach(optionText => {
                 const button = document.createElement('button');
                 button.textContent = optionText;
                 button.classList.add('option-button');
-                button.onclick = () => handleOptionSelect(optionText);
+                // Use an arrow function to correctly pass the optionText
+                button.onclick = () => handleOptionSelect(optionText, button);
                 optionsContainer.appendChild(button);
             });
-            optionsContainer.style.visibility = 'visible'; // إظهار الخيارات
+            console.log("Options displayed. Waiting for selection...");
         }
 
-        // التعامل مع اختيار خيار
-        function handleOptionSelect(selectedOption) {
+        function handleOptionSelect(selectedOption, selectedButton) {
             const decisionEndTime = performance.now();
-            const decisionTime = ((decisionEndTime - decisionStartTime) / 1000).toFixed(2); // بالثواني
+            const decisionTime = ((decisionEndTime - decisionStartTime) / 1000); // Time in seconds
+
+            // Disable all option buttons after selection
+            const optionButtons = optionsContainer.querySelectorAll('.option-button');
+            optionButtons.forEach(btn => btn.disabled = true);
+
             const currentCase = testCases[currentCaseIndex];
             const isCorrect = selectedOption === currentCase.correctAnswer;
+            const score = isCorrect ? parseFloat(decisionTime.toFixed(2)) : null; // Score is time if correct, null otherwise
 
-            // تخزين النتيجة
-            results.push({
+             // Highlight correct and incorrect options
+             optionButtons.forEach(btn => {
+                 if (btn.textContent === currentCase.correctAnswer) {
+                     btn.classList.add('correct-option');
+                 } else {
+                     btn.classList.add('incorrect-option');
+                 }
+                 // Add special style if the user selected the wrong one
+                 if (btn === selectedButton && !isCorrect) {
+                     btn.classList.add('selected-wrong');
+                 }
+             });
+
+
+            // Store the result for this session
+            currentSessionResults.push({
+                caseId: currentCase.id,
                 caseIndex: currentCaseIndex + 1,
                 selected: selectedOption,
                 correct: currentCase.correctAnswer,
-                time: decisionTime,
-                isCorrect: isCorrect
+                time: parseFloat(decisionTime.toFixed(2)), // Store with 2 decimal places
+                isCorrect: isCorrect,
+                score: score // Time if correct, null if wrong
             });
 
-            // الانتقال للحالة التالية
+            console.log(`Case ${currentCaseIndex + 1}: Selected ${selectedOption}, Correct: ${currentCase.correctAnswer}, Time: ${decisionTime.toFixed(2)}s, Correct: ${isCorrect}, Score: ${score}`);
+
+            // Show feedback/next controls
+            feedbackContainer.innerHTML = ''; // Clear previous
+            if (currentCaseIndex < testCases.length - 1) {
+                // Not the last case - show "Next" button
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'التالي 👈';
+                nextBtn.id = 'next-btn';
+                nextBtn.onclick = loadNextCase;
+                feedbackContainer.appendChild(nextBtn);
+            } else {
+                // Last case - show "Finish" buttons
+                const finishBtn = document.createElement('button');
+                finishBtn.textContent = '📊 عرض النتائج';
+                finishBtn.id = 'show-results-btn';
+                finishBtn.onclick = finishTest; // Save and show results screen
+                feedbackContainer.appendChild(finishBtn);
+
+                const backToMainBtn = document.createElement('button');
+                backToMainBtn.textContent = '🏠 القائمة الرئيسية';
+                backToMainBtn.id = 'finish-back-btn';
+                backToMainBtn.onclick = () => {
+                     saveResults(); // Save results even if going back directly
+                     goBackToMain();
+                 };
+                feedbackContainer.appendChild(backToMainBtn);
+            }
+        }
+
+        function loadNextCase() {
             currentCaseIndex++;
             loadCase(currentCaseIndex);
         }
 
-         // عرض النتائج
-        function showResults() {
-            displayResults();
-            showView('results-view');
+        function finishTest() {
+             console.log("Test finished. Saving results...");
+             saveResults();
+             showResultsScreen(currentSessionResults, "نتائج الاختبار الحالي"); // Show results of the session just completed
         }
 
-        // عرض النتائج النهائية في الجدول والملخص
-        function displayResults() {
-            resultsTableBody.innerHTML = ''; // مسح النتائج القديمة
-            let correctCount = 0;
-            let totalTime = 0;
+        // Display results (can show current session or all time)
+        function showResultsScreen(resultsToShow, title) {
+             resultsView.querySelector('h2').textContent = title; // Set title (Current or All Time)
+             resultsTableBody.innerHTML = ''; // Clear previous results table
+             let correctCount = 0;
+             let totalScore = 0; // Sum of times for correct answers
+             let validScoresCount = 0; // Count of cases with valid scores (correct answers)
 
-            results.forEach(result => {
-                const row = resultsTableBody.insertRow();
-                row.insertCell(0).textContent = result.caseIndex;
-                row.insertCell(1).textContent = result.selected;
-                row.insertCell(2).textContent = result.correct;
-                row.insertCell(3).textContent = result.time;
-                const statusCell = row.insertCell(4);
-                statusCell.textContent = result.isCorrect ? 'صحيح' : 'خطأ';
-                statusCell.style.color = result.isCorrect ? 'var(--success-color)' : 'var(--danger-color)';
-                statusCell.style.fontWeight = 'bold';
+             if (!resultsToShow || resultsToShow.length === 0) {
+                 resultsSummary.textContent = 'لا توجد نتائج لعرضها.';
+                 showView('results-view');
+                 return;
+             }
 
-                if (result.isCorrect) {
-                    correctCount++;
+             resultsToShow.forEach(result => {
+                 const row = resultsTableBody.insertRow();
+                 row.insertCell(0).textContent = result.caseIndex || result.caseId; // Show index or ID
+                 row.insertCell(1).textContent = result.selected;
+                 row.insertCell(2).textContent = result.correct;
+                 row.insertCell(3).textContent = result.time.toFixed(2); // Format time
+
+                 const statusCell = row.insertCell(4);
+                 statusCell.textContent = result.isCorrect ? 'صحيح' : 'خطأ';
+                 statusCell.classList.add(result.isCorrect ? 'result-correct' : 'result-incorrect');
+
+                 const scoreCell = row.insertCell(5);
+                 scoreCell.textContent = result.score !== null ? result.score.toFixed(2) : '---'; // Show score (time) or dashes
+
+                 if (result.isCorrect) {
+                     correctCount++;
+                 }
+                 if (result.score !== null) {
+                     totalScore += result.score;
+                      validScoresCount++;
+                 }
+             });
+
+             const accuracy = resultsToShow.length > 0 ? ((correctCount / resultsToShow.length) * 100).toFixed(1) : 0;
+             // Calculate average score (time) only for correct answers
+             const averageScore = validScoresCount > 0 ? (totalScore / validScoresCount).toFixed(2) : 'N/A';
+
+             resultsSummary.innerHTML = `
+                 إجمالي الحالات: ${resultsToShow.length}<br>
+                 الإجابات الصحيحة: ${correctCount} (${accuracy}%)<br>
+                 متوسط نقاط القرار الصحيح (الوقت): ${averageScore} ثانية (الأقل أفضل)
+             `;
+
+             showView('results-view');
+         }
+
+
+        function showAllTimeResultsScreen() {
+             if (allTimeResults.length === 0) {
+                 alert("لا توجد نتائج سابقة مسجلة.");
+                 // Optionally show the empty results screen
+                  showResultsScreen([], "نتائجي السابقة");
+                 return;
+             }
+             console.log("Showing all-time results.");
+             // Sort results by timestamp if available, or just show as loaded
+             showResultsScreen(allTimeResults, "نتائجي السابقة");
+         }
+
+
+        function saveResults() {
+             if (currentSessionResults.length > 0) {
+                 // Add a timestamp to the session results before saving
+                 const timestamp = new Date().toISOString();
+                 const sessionData = {
+                     timestamp: timestamp,
+                     results: currentSessionResults
+                 };
+                 // Add current session to the beginning of all-time results
+                 allTimeResults.unshift(sessionData); // Add newest first
+
+                 try {
+                     localStorage.setItem(RESULTS_STORAGE_KEY, JSON.stringify(allTimeResults));
+                     console.log("Results saved to localStorage.");
+                     // Clear session results after saving
+                     currentSessionResults = [];
+                 } catch (e) {
+                     console.error("Failed to save results to localStorage:", e);
+                     alert("حدث خطأ أثناء حفظ النتائج. قد تكون مساحة التخزين ممتلئة.");
+                 }
+             } else {
+                  console.log("No new results in current session to save.");
+             }
+         }
+
+        function loadAllTimeResults() {
+            try {
+                const storedResults = localStorage.getItem(RESULTS_STORAGE_KEY);
+                if (storedResults) {
+                    allTimeResults = JSON.parse(storedResults);
+                    // Basic validation: ensure it's an array
+                    if (!Array.isArray(allTimeResults)) {
+                        console.warn("Stored results format is invalid, resetting.");
+                        allTimeResults = [];
+                    }
+                     // If results are stored as sessions, flatten them for display (or adjust display logic)
+                     // For simplicity here, let's flatten them.
+                     let flattenedResults = [];
+                     allTimeResults.forEach(session => {
+                         if(session.results && Array.isArray(session.results)) {
+                              // Add session timestamp to each result for potential sorting later
+                              session.results.forEach(r => r.sessionTimestamp = session.timestamp);
+                              flattenedResults = flattenedResults.concat(session.results);
+                         } else if (session.caseId) {
+                             // Handle older format if necessary (where results were saved individually)
+                             flattenedResults.push(session);
+                         }
+                     });
+                     allTimeResults = flattenedResults; // Overwrite with flattened list for display
+
+
+                    console.log(`Loaded ${allTimeResults.length} results from localStorage.`);
+                } else {
+                    allTimeResults = [];
+                    console.log("No previous results found in localStorage.");
                 }
-                totalTime += parseFloat(result.time);
-            });
-
-            const accuracy = results.length > 0 ? ((correctCount / results.length) * 100).toFixed(1) : 0;
-            const averageTime = results.length > 0 ? (totalTime / results.length).toFixed(2) : 0;
-
-            resultsSummary.innerHTML = `
-                الإجمالي: ${correctCount} إجابات صحيحة من ${results.length} حالة.<br>
-                الدقة: ${accuracy}%<br>
-                متوسط وقت القرار: ${averageTime} ثانية.
-            `;
-        }
-
-        // إعادة بدء الاختبار
-        function restartTest() {
-            currentCaseIndex = 0;
-            results = [];
-            resultsTableBody.innerHTML = '';
-            resultsSummary.innerHTML = '';
-            // التأكد من إيقاف الفيديو إذا كان يعمل عند إعادة التشغيل (احتياطي)
-            if (!videoElement.paused) {
-                videoElement.pause();
+            } catch (e) {
+                console.error("Failed to load or parse results from localStorage:", e);
+                allTimeResults = [];
+                 // Optionally clear potentially corrupted storage
+                 // localStorage.removeItem(RESULTS_STORAGE_KEY);
             }
-            videoElement.src = ''; // إزالة مصدر الفيديو لتجنب تشغيل الفيديو القديم
-            loadCase(currentCaseIndex); // تحميل الحالة الأولى
-            showView('test-view'); // عرض شاشة الاختبار
         }
 
-        // تم حذف وظيفة تسجيل الخروج
-
-        // --- ربط الأحداث ---
-        // تم حذف مستمع حدث زر تسجيل الدخول
-        stopVideoBtn.addEventListener('click', handleStopVideo);
-        restartBtn.addEventListener('click', restartTest);
-        // تم حذف مستمع حدث زر تسجيل الخروج
-
-        // --- التهيئة الأولية ---
-        function initializeApp() {
-            console.log("Initializing app...");
-            currentCaseIndex = 0; // التأكد من البدء من الصفر
-            results = [];         // مسح أي نتائج سابقة
-            showView('test-view'); // إظهار شاشة الاختبار مباشرة
-            loadCase(currentCaseIndex); // تحميل الحالة الأولى
+        function goBackToMain() {
+             // Optional: Stop video if going back from results during a test (unlikely scenario now)
+             if (!videoElement.paused) {
+                 videoElement.pause();
+             }
+             videoElement.src = ''; // Clear video source
+            showView('main-view');
         }
 
-         // تحذير عند محاولة إغلاق الصفحة أثناء الاختبار
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+         // --- Prevent leaving page during test ---
          window.addEventListener('beforeunload', (event) => {
-             // التحقق مما إذا كان الاختبار قيد التقدم (في شاشة الاختبار)
-             if (testView.style.display === 'flex') {
+             if (testView.style.display === 'flex' && currentSessionResults.length < testCases.length) {
+                 // Check if test view is active and test is not finished
                  event.preventDefault();
-                 event.returnValue = '';
+                 event.returnValue = 'هل أنت متأكد من رغبتك في المغادرة؟ سيتم فقدان تقدم الاختبار الحالي.'; // Standard confirmation message
              }
          });
-
-         // البدء بتشغيل التطبيق بمجرد تحميل الصفحة
-         document.addEventListener('DOMContentLoaded', initializeApp);
-
 
     </script>
 
