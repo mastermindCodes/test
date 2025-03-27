@@ -47,43 +47,10 @@
             overflow: hidden; /* تأكيد عدم التمرير داخل الحاوية */
         }
 
-        /* --- شاشة تسجيل الدخول --- */
-        #login-view {
-            display: flex; /* Use flex for centering */
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%; /* Take full height of container */
-        }
-
-        #login-view h1 {
-             margin-bottom: 30px;
-             color: var(--primary-color);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            width: 80%;
-            max-width: 300px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* لتضمين الحشو والإطار في العرض */
-        }
-
         /* --- شاشة الاختبار --- */
+        /* Test view is now the default starting view */
         #test-view {
-            display: none; /* مخفي افتراضيًا */
+            display: flex; /* Display by default */
             flex-direction: column;
             height: 100%;
         }
@@ -91,8 +58,7 @@
         #video-container {
             position: relative;
             width: 100%;
-            /* حساب الارتفاع لنسبة 16:9 مع ترك مساحة للعناصر الأخرى */
-            height: 60vh; /* زيادة ارتفاع الفيديو لتعويض غياب الكاميرا */
+            height: 60vh; /* زيادة ارتفاع الفيديو */
             max-height: 400px; /* زيادة الحد الأقصى لارتفاع الفيديو */
             background-color: #000;
             margin-bottom: 15px;
@@ -198,12 +164,6 @@
             color: var(--secondary-color);
         }
 
-        #error-message {
-            color: var(--danger-color);
-            margin-top: 10px;
-            min-height: 1.2em; /* حجز مساحة لرسالة الخطأ */
-        }
-
          /* تحسينات للشاشات الصغيرة واللمس */
          @media (max-width: 600px) {
             .container {
@@ -237,27 +197,14 @@
 
     <div class="container">
 
-        <!-- 1. شاشة تسجيل الدخول -->
-        <div id="login-view">
-            <h1>اختبار قرارات الحكام</h1>
-            <div class="form-group">
-                <label for="username">اسم المستخدم:</label>
-                <input type="text" id="username" name="username">
-            </div>
-            <div class="form-group">
-                <label for="password">كلمة المرور:</label>
-                <input type="password" id="password" name="password">
-            </div>
-            <button id="login-btn">تسجيل الدخول</button>
-            <div id="error-message"></div>
-        </div>
+        <!-- شاشة تسجيل الدخول محذوفة -->
 
-        <!-- 2. شاشة الاختبار -->
+        <!-- 1. شاشة الاختبار (أصبحت الشاشة الافتراضية) -->
         <div id="test-view">
+             <h1>اختبار قرارات الحكام</h1> <!-- Added Title Here -->
             <div id="status">الحالة 1 من X</div>
             <div id="video-container">
                 <video id="test-video" playsinline muted controlsList="nodownload nofullscreen noremoteplayback"></video>
-                <!-- تم حذف عنصر الكاميرا -->
             </div>
             <div id="controls">
                 <button id="stop-video-btn">إيقاف الفيديو</button>
@@ -267,7 +214,7 @@
             </div>
         </div>
 
-        <!-- 3. شاشة النتائج -->
+        <!-- 2. شاشة النتائج -->
         <div id="results-view">
             <h2>نتائج الاختبار</h2>
             <div id="results-summary"></div>
@@ -286,29 +233,24 @@
                 </tbody>
             </table>
             <button id="restart-btn">إعادة الاختبار</button>
-             <button id="logout-btn" style="margin-top: 10px; background-color: var(--secondary-color);">تسجيل الخروج</button>
+            <!-- زر تسجيل الخروج محذوف -->
         </div>
 
     </div>
 
     <script>
         // --- العناصر ---
-        const loginView = document.getElementById('login-view');
+        // تم حذف عناصر تسجيل الدخول
         const testView = document.getElementById('test-view');
         const resultsView = document.getElementById('results-view');
-        const loginBtn = document.getElementById('login-btn');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const errorMessage = document.getElementById('error-message');
         const videoElement = document.getElementById('test-video');
-        // تم حذف cameraPreviewElement
         const stopVideoBtn = document.getElementById('stop-video-btn');
         const optionsContainer = document.getElementById('options-container');
         const statusElement = document.getElementById('status');
         const resultsSummary = document.getElementById('results-summary');
         const resultsTableBody = document.querySelector('#results-table tbody');
         const restartBtn = document.getElementById('restart-btn');
-        const logoutBtn = document.getElementById('logout-btn');
+        // تم حذف زر تسجيل الخروج
 
 
         // --- بيانات الاختبار (استخدم روابط فيديوهات حقيقية ومتاحة للعامة) ---
@@ -346,29 +288,28 @@
         let currentCaseIndex = 0;
         let decisionStartTime = 0;
         let results = [];
-        // تم حذف متغيرات التسجيل والكاميرا (mediaRecorder, recordedChunks, screenStream, cameraStream)
 
         // --- وظائف ---
 
         // وظيفة للتبديل بين الشاشات
         function showView(viewId) {
-            loginView.style.display = 'none';
+            // إخفاء كل الشاشات أولاً
             testView.style.display = 'none';
             resultsView.style.display = 'none';
 
             const viewToShow = document.getElementById(viewId);
             if (viewToShow) {
-                // استخدام flex بدلاً من block للحفاظ على التنسيق
+                // إظهار الشاشة المطلوبة باستخدام flex
                 viewToShow.style.display = 'flex';
+            } else {
+                 console.error("View not found:", viewId);
             }
         }
-
-        // تم حذف وظائف startRecordingAndCamera و stopStreams
 
         // تحميل وعرض الحالة (الفيديو)
         function loadCase(index) {
             if (index >= testCases.length) {
-                showResults(); // انتهى الاختبار، اعرض النتائج مباشرة
+                showResults(); // انتهى الاختبار، اعرض النتائج
                 return;
             }
 
@@ -386,11 +327,10 @@
                 console.warn("Autoplay failed:", error);
                 // قد تحتاج المتصفحات الحديثة إلى تفاعل المستخدم لبدء الفيديو
                  statusElement.textContent += " (اضغط على الفيديو للبدء إذا لم يعمل)";
-                 // نضيف مستمع نقرة واحد لتشغيل الفيديو إذا فشل التشغيل التلقائي
                 const playHandler = () => {
                     videoElement.play();
-                    videoElement.removeEventListener('click', playHandler); // نزيل المستمع بعد أول نقرة ناجحة
-                    videoElement.removeEventListener('touchstart', playHandler); // نزيل المستمع بعد أول لمسة ناجحة
+                    videoElement.removeEventListener('click', playHandler);
+                    videoElement.removeEventListener('touchstart', playHandler);
                 };
                 videoElement.addEventListener('click', playHandler);
                  videoElement.addEventListener('touchstart', playHandler); // لدعم اللمس
@@ -438,7 +378,7 @@
             loadCase(currentCaseIndex);
         }
 
-         // عرض النتائج (لم يعد بحاجة لإيقاف التدفقات)
+         // عرض النتائج
         function showResults() {
             displayResults();
             showView('results-view');
@@ -483,67 +423,44 @@
             results = [];
             resultsTableBody.innerHTML = '';
             resultsSummary.innerHTML = '';
-            errorMessage.textContent = ''; // مسح رسائل الخطأ
-            // لا حاجة لبدء التسجيل/الكاميرا، فقط تحميل الحالة الأولى
-            loadCase(currentCaseIndex);
-            showView('test-view');
-        }
-
-        // تسجيل الخروج
-        function logout() {
-            // لا حاجة لإيقاف التدفقات
-            usernameInput.value = '';
-            passwordInput.value = '';
-            errorMessage.textContent = '';
-            currentCaseIndex = 0;
-            results = [];
-            resultsTableBody.innerHTML = '';
-            resultsSummary.innerHTML = '';
-            // التأكد من إيقاف الفيديو إذا كان يعمل عند تسجيل الخروج من شاشة الاختبار (احتياطي)
+            // التأكد من إيقاف الفيديو إذا كان يعمل عند إعادة التشغيل (احتياطي)
             if (!videoElement.paused) {
                 videoElement.pause();
             }
-            videoElement.src = ''; // إزالة مصدر الفيديو
-            showView('login-view');
+            videoElement.src = ''; // إزالة مصدر الفيديو لتجنب تشغيل الفيديو القديم
+            loadCase(currentCaseIndex); // تحميل الحالة الأولى
+            showView('test-view'); // عرض شاشة الاختبار
         }
 
+        // تم حذف وظيفة تسجيل الخروج
 
         // --- ربط الأحداث ---
-        loginBtn.addEventListener('click', () => {
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
-
-            // تحقق بسيط جدًا
-            if (username === 'admin' && password === 'admin') {
-                errorMessage.textContent = '';
-                console.log("Login successful.");
-                // إعادة تعيين وبدء الاختبار مباشرة
-                currentCaseIndex = 0;
-                results = [];
-                loadCase(currentCaseIndex);
-                showView('test-view');
-
-            } else {
-                errorMessage.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
-            }
-        });
-
+        // تم حذف مستمع حدث زر تسجيل الدخول
         stopVideoBtn.addEventListener('click', handleStopVideo);
         restartBtn.addEventListener('click', restartTest);
-        logoutBtn.addEventListener('click', logout);
+        // تم حذف مستمع حدث زر تسجيل الخروج
 
         // --- التهيئة الأولية ---
-        showView('login-view'); // البدء بشاشة تسجيل الدخول
+        function initializeApp() {
+            console.log("Initializing app...");
+            currentCaseIndex = 0; // التأكد من البدء من الصفر
+            results = [];         // مسح أي نتائج سابقة
+            showView('test-view'); // إظهار شاشة الاختبار مباشرة
+            loadCase(currentCaseIndex); // تحميل الحالة الأولى
+        }
 
-         // (اختياري) يمكنك إبقاء التحذير عند محاولة إغلاق الصفحة أثناء الاختبار
+         // تحذير عند محاولة إغلاق الصفحة أثناء الاختبار
          window.addEventListener('beforeunload', (event) => {
              // التحقق مما إذا كان الاختبار قيد التقدم (في شاشة الاختبار)
              if (testView.style.display === 'flex') {
-                 // رسالة التحذير القياسية
-                 event.preventDefault(); // مطلوب لبعض المتصفحات
-                 event.returnValue = ''; // مطلوب لمعظم المتصفحات الحديثة
+                 event.preventDefault();
+                 event.returnValue = '';
              }
          });
+
+         // البدء بتشغيل التطبيق بمجرد تحميل الصفحة
+         document.addEventListener('DOMContentLoaded', initializeApp);
+
 
     </script>
 
