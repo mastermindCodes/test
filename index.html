@@ -86,15 +86,14 @@
             display: none; /* مخفي افتراضيًا */
             flex-direction: column;
             height: 100%;
-            position: relative; /* للسماح بوضع الكاميرا بشكل مطلق */
         }
 
         #video-container {
             position: relative;
             width: 100%;
             /* حساب الارتفاع لنسبة 16:9 مع ترك مساحة للعناصر الأخرى */
-            height: 50vh;
-            max-height: 350px; /* تحديد ارتفاع أقصى للفيديو */
+            height: 60vh; /* زيادة ارتفاع الفيديو لتعويض غياب الكاميرا */
+            max-height: 400px; /* زيادة الحد الأقصى لارتفاع الفيديو */
             background-color: #000;
             margin-bottom: 15px;
         }
@@ -105,21 +104,6 @@
             height: 100%;
             object-fit: contain; /* للحفاظ على نسبة العرض إلى الارتفاع */
         }
-
-         #camera-preview {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            width: 100px;
-            height: 75px;
-            border: 2px solid var(--primary-color);
-            background-color: #333;
-            border-radius: 4px;
-            object-fit: cover;
-            z-index: 10; /* فوق الفيديو */
-            transform: scaleX(-1); /* عكس الصورة لتكون كمرآة */
-        }
-
 
         #controls {
             margin-bottom: 15px;
@@ -231,7 +215,7 @@
                  box-shadow: none;
             }
             #video-container {
-                height: 45vh; /* تعديل الارتفاع للشاشات الأصغر */
+                height: 55vh; /* تعديل الارتفاع للشاشات الأصغر */
                 max-height: none;
                  margin-bottom: 10px;
             }
@@ -241,10 +225,6 @@
              }
              #options-container {
                  gap: 8px;
-             }
-              #camera-preview {
-                width: 80px;
-                height: 60px;
              }
              #results-view {
                  padding-bottom: 60px; /* مساحة إضافية في الأسفل لتجنب التغطية */
@@ -277,7 +257,7 @@
             <div id="status">الحالة 1 من X</div>
             <div id="video-container">
                 <video id="test-video" playsinline muted controlsList="nodownload nofullscreen noremoteplayback"></video>
-                <video id="camera-preview" autoplay playsinline muted></video> <!-- لعرض الكاميرا -->
+                <!-- تم حذف عنصر الكاميرا -->
             </div>
             <div id="controls">
                 <button id="stop-video-btn">إيقاف الفيديو</button>
@@ -321,7 +301,7 @@
         const passwordInput = document.getElementById('password');
         const errorMessage = document.getElementById('error-message');
         const videoElement = document.getElementById('test-video');
-        const cameraPreviewElement = document.getElementById('camera-preview');
+        // تم حذف cameraPreviewElement
         const stopVideoBtn = document.getElementById('stop-video-btn');
         const optionsContainer = document.getElementById('options-container');
         const statusElement = document.getElementById('status');
@@ -366,10 +346,7 @@
         let currentCaseIndex = 0;
         let decisionStartTime = 0;
         let results = [];
-        let mediaRecorder;
-        let recordedChunks = [];
-        let screenStream;
-        let cameraStream;
+        // تم حذف متغيرات التسجيل والكاميرا (mediaRecorder, recordedChunks, screenStream, cameraStream)
 
         // --- وظائف ---
 
@@ -386,131 +363,12 @@
             }
         }
 
-        // بدء التسجيل والكاميرا
-       async function startRecordingAndCamera() {
-            recordedChunks = []; // إعادة تعيين للمحاولة الجديدة
-            try {
-                // طلب تسجيل الشاشة أولاً (يتضمن عادةً اختيار الشاشة والصوت)
-                 // طلب تسجيل الشاشة والصوت
-                screenStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: { mediaSource: "screen", width: { ideal: 1280 }, height: { ideal: 720 } },
-                    audio: true, // محاولة تسجيل صوت النظام/التبويب
-                    preferCurrentTab: false, // أو true إذا كنت تفضل التبويب الحالي فقط
-                    selfBrowserSurface: "exclude", // استبعاد واجهة المتصفح إن أمكن
-                    systemAudio: "include", // محاولة تضمين صوت النظام
-                    surfaceSwitching: "include" // السماح بتبديل الأسطح
-                });
-
-                // طلب الكاميرا الأمامية للعرض
-                cameraStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 160 }, height: { ideal: 120 } }, // دقة أقل للكاميرا
-                    audio: false // لا نحتاج صوت الكاميرا عادة مع صوت الشاشة
-                });
-
-                // عرض بث الكاميرا في العنصر المخصص
-                cameraPreviewElement.srcObject = cameraStream;
-                cameraPreviewElement.style.display = 'block'; // إظهار عنصر الكاميرا
-
-                 // إعداد MediaRecorder لتسجيل الشاشة (والصوت المصاحب لها إن وجد)
-                const options = { mimeType: 'video/webm; codecs=vp9' }; // جرب webm أولاً
-                try {
-                    mediaRecorder = new MediaRecorder(screenStream, options);
-                } catch (e1) {
-                    console.warn('WebM/VP9 failed, trying VP8:', e1.message);
-                    try {
-                        options.mimeType = 'video/webm; codecs=vp8';
-                        mediaRecorder = new MediaRecorder(screenStream, options);
-                    } catch (e2) {
-                         console.warn('WebM/VP8 failed, trying default:', e2.message);
-                         try {
-                             options.mimeType = 'video/webm'; // النوع الافتراضي للمتصفح
-                             mediaRecorder = new MediaRecorder(screenStream, options);
-                         } catch (e3) {
-                            console.error('MediaRecorder initialization failed:', e3.message);
-                             alert('فشل في بدء مسجل الوسائط. قد لا يكون متصفحك يدعم التسجيل بالصيغ المتاحة.');
-                             // قد تحتاج إلى إيقاف التدفقات هنا والعودة
-                             stopStreams();
-                             showView('login-view'); // العودة لتسجيل الدخول
-                             return false; // فشل البدء
-                         }
-                    }
-                }
-
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                        console.log("Chunk recorded, size:", event.data.size);
-                    }
-                };
-
-                mediaRecorder.onstop = () => {
-                    console.log("Recording stopped.");
-                    // يمكن إضافة كود هنا لحفظ الملف (معقد في ملف واحد)
-                    // const blob = new Blob(recordedChunks, { type: options.mimeType });
-                    // const url = URL.createObjectURL(blob);
-                    // const a = document.createElement('a');
-                    // a.style.display = 'none';
-                    // a.href = url;
-                    // a.download = 'test_recording.webm';
-                    // document.body.appendChild(a);
-                    // a.click();
-                    // window.URL.revokeObjectURL(url);
-                    // document.body.removeChild(a);
-                    // alert('تم إيقاف التسجيل. الملف جاهز (إذا تم تنفيذ كود الحفظ).');
-                };
-
-                 // التعامل مع إيقاف المشاركة من قبل المستخدم
-                screenStream.getVideoTracks()[0].onended = () => {
-                    console.log('Screen sharing stopped by user.');
-                    alert('تم إيقاف مشاركة الشاشة. سيتم إنهاء الاختبار.');
-                    stopStreamsAndShowResults(); // إنهاء الاختبار وعرض النتائج الحالية
-                };
-
-
-                mediaRecorder.start();
-                console.log("Screen recording started.");
-                return true; // نجح البدء
-
-            } catch (err) {
-                console.error('Error accessing media devices:', err);
-                errorMessage.textContent = `خطأ في الوصول للوسائط: ${err.name} - ${err.message}. تأكد من منح الأذونات.`;
-                // محاولة إيقاف أي تدفقات بدأت جزئياً
-                 stopStreams();
-                 showView('login-view'); // العودة لتسجيل الدخول أو عرض خطأ دائم
-                return false; // فشل البدء
-            }
-        }
-
-       // إيقاف التدفقات
-        function stopStreams() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                 try {
-                    mediaRecorder.stop();
-                 } catch (e) {
-                    console.error("Error stopping media recorder:", e);
-                 }
-            }
-            if (screenStream) {
-                screenStream.getTracks().forEach(track => track.stop());
-                console.log("Screen stream stopped.");
-            }
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                console.log("Camera stream stopped.");
-                 cameraPreviewElement.srcObject = null; // إزالة المصدر من عنصر الفيديو
-                 cameraPreviewElement.style.display = 'none'; // إخفاء عنصر الكاميرا
-            }
-             mediaRecorder = null;
-             screenStream = null;
-             cameraStream = null;
-             recordedChunks = []; // مسح البيانات المسجلة
-        }
-
+        // تم حذف وظائف startRecordingAndCamera و stopStreams
 
         // تحميل وعرض الحالة (الفيديو)
         function loadCase(index) {
             if (index >= testCases.length) {
-                stopStreamsAndShowResults(); // انتهى الاختبار
+                showResults(); // انتهى الاختبار، اعرض النتائج مباشرة
                 return;
             }
 
@@ -532,7 +390,7 @@
                 const playHandler = () => {
                     videoElement.play();
                     videoElement.removeEventListener('click', playHandler); // نزيل المستمع بعد أول نقرة ناجحة
-                     videoElement.removeEventListener('touchstart', playHandler); // نزيل المستمع بعد أول لمسة ناجحة
+                    videoElement.removeEventListener('touchstart', playHandler); // نزيل المستمع بعد أول لمسة ناجحة
                 };
                 videoElement.addEventListener('click', playHandler);
                  videoElement.addEventListener('touchstart', playHandler); // لدعم اللمس
@@ -580,14 +438,13 @@
             loadCase(currentCaseIndex);
         }
 
-         // إيقاف التدفقات وعرض النتائج
-        function stopStreamsAndShowResults() {
-            stopStreams(); // إيقاف الكاميرا والتسجيل
+         // عرض النتائج (لم يعد بحاجة لإيقاف التدفقات)
+        function showResults() {
             displayResults();
             showView('results-view');
         }
 
-        // عرض النتائج النهائية
+        // عرض النتائج النهائية في الجدول والملخص
         function displayResults() {
             resultsTableBody.innerHTML = ''; // مسح النتائج القديمة
             let correctCount = 0;
@@ -627,22 +484,14 @@
             resultsTableBody.innerHTML = '';
             resultsSummary.innerHTML = '';
             errorMessage.textContent = ''; // مسح رسائل الخطأ
-             // محاولة بدء التسجيل والكاميرا مرة أخرى
-             startRecordingAndCamera().then(success => {
-                 if (success) {
-                     loadCase(currentCaseIndex);
-                     showView('test-view');
-                 } else {
-                      // إذا فشل بدء التسجيل/الكاميرا، ابق في شاشة النتائج أو عد لتسجيل الدخول
-                      alert("فشل في إعادة تشغيل الاختبار بسبب مشكلة في الوسائط.");
-                      showView('results-view'); // أو العودة لتسجيل الدخول
-                 }
-             });
+            // لا حاجة لبدء التسجيل/الكاميرا، فقط تحميل الحالة الأولى
+            loadCase(currentCaseIndex);
+            showView('test-view');
         }
 
         // تسجيل الخروج
         function logout() {
-            stopStreams(); // التأكد من إيقاف كل شيء
+            // لا حاجة لإيقاف التدفقات
             usernameInput.value = '';
             passwordInput.value = '';
             errorMessage.textContent = '';
@@ -650,8 +499,11 @@
             results = [];
             resultsTableBody.innerHTML = '';
             resultsSummary.innerHTML = '';
-             cameraPreviewElement.srcObject = null;
-             cameraPreviewElement.style.display = 'none';
+            // التأكد من إيقاف الفيديو إذا كان يعمل عند تسجيل الخروج من شاشة الاختبار (احتياطي)
+            if (!videoElement.paused) {
+                videoElement.pause();
+            }
+            videoElement.src = ''; // إزالة مصدر الفيديو
             showView('login-view');
         }
 
@@ -661,29 +513,15 @@
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
-            // تحقق بسيط جدًا (للتوضيح فقط)
+            // تحقق بسيط جدًا
             if (username === 'admin' && password === 'admin') {
                 errorMessage.textContent = '';
-                 console.log("Login successful, attempting to start media...");
-                 // البدء بتشغيل الكاميرا والتسجيل
-                 startRecordingAndCamera().then(success => {
-                     if (success) {
-                         console.log("Media started successfully.");
-                         currentCaseIndex = 0; // إعادة التعيين عند تسجيل الدخول
-                         results = [];       // إعادة التعيين عند تسجيل الدخول
-                         loadCase(currentCaseIndex);
-                         showView('test-view');
-                     } else {
-                         console.log("Media failed to start.");
-                         // رسالة الخطأ يجب أن تكون قد عُرضت داخل startRecordingAndCamera
-                         // لا تنتقل إلى شاشة الاختبار
-                         errorMessage.textContent = errorMessage.textContent || "فشل في بدء الكاميرا أو تسجيل الشاشة. تحقق من الأذونات.";
-                     }
-                 }).catch(err => {
-                     // هذا الـ catch قد لا يُستدعى إذا تم التعامل مع الأخطاء داخل startRecordingAndCamera
-                     console.error("Unexpected error during media start:", err);
-                     errorMessage.textContent = `خطأ غير متوقع: ${err.message}`;
-                 });
+                console.log("Login successful.");
+                // إعادة تعيين وبدء الاختبار مباشرة
+                currentCaseIndex = 0;
+                results = [];
+                loadCase(currentCaseIndex);
+                showView('test-view');
 
             } else {
                 errorMessage.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
@@ -697,7 +535,7 @@
         // --- التهيئة الأولية ---
         showView('login-view'); // البدء بشاشة تسجيل الدخول
 
-         // تحذير عند محاولة إغلاق الصفحة أثناء الاختبار
+         // (اختياري) يمكنك إبقاء التحذير عند محاولة إغلاق الصفحة أثناء الاختبار
          window.addEventListener('beforeunload', (event) => {
              // التحقق مما إذا كان الاختبار قيد التقدم (في شاشة الاختبار)
              if (testView.style.display === 'flex') {
@@ -705,7 +543,6 @@
                  event.preventDefault(); // مطلوب لبعض المتصفحات
                  event.returnValue = ''; // مطلوب لمعظم المتصفحات الحديثة
              }
-             // لا يوجد تحذير إذا كان في شاشة تسجيل الدخول أو النتائج
          });
 
     </script>
